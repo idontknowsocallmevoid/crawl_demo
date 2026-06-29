@@ -13,8 +13,10 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import matplotlib
 
-# 反爬虫：每次请求随机 UA，并设置 secure=False 避免联网获取 UA 库时卡死
-ua = UserAgent(strict=False, secure=False, cache_size=None)
+# 反爬虫：每次请求随机 UA，fallback 用于联网失败时兜底
+ua = UserAgent(
+    fallback='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+)
 
 # 先给出爬取网址和各存储路径
 BASE_URL = 'https://book.douban.com/top250'
@@ -39,7 +41,7 @@ def ensure_dirs():
 def get_html(url):
     """发起 GET 请求，自动轮换 UA，返回 HTML 文本"""
     headers = {
-        "User-Agent": ua.browser().get('chrome', 'Mozilla/5.0'),
+        "User-Agent": ua.random,
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
         "Connection": "keep-alive",
